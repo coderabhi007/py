@@ -1,0 +1,199 @@
+#1
+import re
+
+# Sample text
+text = "My phone number is 123-456-7890 and my email is example@example.com."
+
+# Regex pattern for phone number
+phone_pattern = r'\d{3}-\d{3}-\d{4}'
+# Regex pattern for email address
+email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+# Find phone numbers
+phone_numbers = re.findall(phone_pattern, text)
+print("Phone Numbers:", phone_numbers)
+
+# Find email addresses
+emails = re.findall(email_pattern, text)
+print("Email Addresses:", emails)
+
+#2
+import re
+
+# Sample text
+text = "My favorite numbers are 7, 18, and 42."
+
+# `match()`: Tries to match a pattern at the start of the string
+match = re.match(r'\d+', text)
+if match:
+    print("Match found:", match.group())
+else:
+    print("No match found at the start")
+
+# `search()`: Searches for a pattern anywhere in the string
+search = re.search(r'\d+', text)
+if search:
+    print("Search found:", search.group())
+
+# `findall()`: Finds all occurrences of a pattern in the string
+findall = re.findall(r'\d+', text)
+print("Findall results:", findall)
+
+#3
+import re
+
+# Sample text
+text = "My phone number is 123-456-7890, my email is example@example.com, and my SSN is 123-45-6789."
+
+# Regex patterns
+phone_pattern = r'\d{3}-\d{3}-\d{4}'
+email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+ssn_pattern = r'\d{3}-\d{2}-\d{4}'
+
+# Validate phone number
+phone_numbers = re.findall(phone_pattern, text)
+print("Valid Phone Numbers:", phone_numbers)
+
+# Validate email address
+emails = re.findall(email_pattern, text)
+print("Valid Email Addresses:", emails)
+
+# Validate SSN
+ssns = re.findall(ssn_pattern, text)
+print("Valid SSNs:", ssns)
+
+#4
+from bs4 import BeautifulSoup
+
+# Sample HTML
+html_doc = """
+<html>
+    <head><title>Sample Page</title></head>
+    <body>
+        <p><a href="http://example.com/page1">Page 1</a></p>
+        <p><a href="http://example.com/page2">Page 2</a></p>
+    </body>
+</html>
+"""
+
+# Parse HTML
+soup = BeautifulSoup(html_doc, 'html.parser')
+
+# Find all hyperlinks
+links = soup.find_all('a')
+for link in links:
+    print("Link:", link.get('href'))
+#5
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import NMF
+
+# Sample documents
+documents = [
+    "The cat is on the table.",
+    "Dogs are in the yard.",
+    "Cats and dogs are pets.",
+    "I love my pet cat."
+]
+
+# Vectorize the documents
+tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+tfidf = tfidf_vectorizer.fit_transform(documents)
+
+# Discover topics using NMF
+nmf = NMF(n_components=2, random_state=1).fit(tfidf)
+feature_names = tfidf_vectorizer.get_feature_names_out()
+
+# Display topics
+for topic_idx, topic in enumerate(nmf.components_):
+    print(f"Topic {topic_idx}:")
+    print(" ".join([feature_names[i] for i in topic.argsort()[:-5 - 1:-1]]))
+#6
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+# Sample documents and their categories
+documents = [
+    "I love programming in Python.",
+    "JavaScript is a versatile language.",
+    "Python is great for data science.",
+    "JavaScript is used for web development."
+]
+categories = ['Python', 'JavaScript', 'Python', 'JavaScript']
+
+# Create a model pipeline
+model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+
+# Train the model
+model.fit(documents, categories)
+
+# Classify a new document
+new_document = "Python is my favorite language."
+predicted_category = model.predict([new_document])
+print("Predicted Category:", predicted_category[0])
+
+#7
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+# Sample text
+text = "Hello world. This is a test sentence. Natural Language Processing is fun."
+
+# Sentence Tokenization
+sentences = sent_tokenize(text)
+print("Sentences:", sentences)
+
+# Word Tokenization
+words = word_tokenize(text)
+print("Words:", words)
+
+# Stopwords removal
+stop_words = set(stopwords.words('english'))
+filtered_words = [word for word in words if word.lower() not in stop_words]
+print("Filtered Words:", filtered_words)
+
+#8
+import nltk
+from nltk import word_tokenize, pos_tag, ne_chunk
+
+# Sample text
+text = "Barack Obama was the 44th President of the United States."
+
+# Tokenize and POS tagging
+words = word_tokenize(text)
+pos_tags = pos_tag(words)
+
+# Named Entity Recognition
+named_entities = ne_chunk(pos_tags)
+print("Named Entities:", named_entities)
+
+#9
+from nltk.corpus import words
+from nltk.metrics.distance import edit_distance
+
+# Sample word and word list
+word = "speling"
+word_list = words.words()
+
+# Function to find the closest word
+def spell_recommender(word, word_list):
+    closest_word = min(word_list, key=lambda w: edit_distance(word, w))
+    return closest_word
+
+# Recommend spelling
+recommended_word = spell_recommender(word, word_list)
+print("Recommended Spelling:", recommended_word)
+
+#10
+from textblob import TextBlob
+
+# Sample text
+text = "I love this product! It's amazing."
+
+# Create a TextBlob object
+blob = TextBlob(text)
+
+# Get the sentiment
+sentiment = blob.sentiment
+print("Sentiment:", sentiment)
