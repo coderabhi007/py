@@ -1,0 +1,65 @@
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_squared_error
+
+# Load dataset (ensure a datetime index and a numeric column for the value)
+# Replace 'your_dataset.csv' with your actual dataset file
+data = pd.read_csv('your_dataset.csv', parse_dates=['date'], index_col='date')
+
+# Plot the original data
+plt.figure(figsize=(10, 6))
+plt.plot(data, label='Original Data')
+plt.title('Time Series Data')
+plt.legend()
+plt.show()
+
+# Step 1: Splitting the data into training and validation sets
+train_size = int(len(data) * 0.8)
+train, validation = data[:train_size], data[train_size:]
+
+# Step 2: Applying Holt-Winters Method (Triple Exponential Smoothing)
+# Additive Model
+additive_model = ExponentialSmoothing(train['value'], 
+                                      seasonal='add', 
+                                      seasonal_periods=12, 
+                                      trend='add').fit()
+
+# Multiplicative Model
+multiplicative_model = ExponentialSmoothing(train['value'], 
+                                            seasonal='mul', 
+                                            seasonal_periods=12, 
+                                            trend='add').fit()
+
+# Step 3: Forecasting
+additive_forecast = additive_model.forecast(len(validation))
+multiplicative_forecast = multiplicative_model.forecast(len(validation))
+
+# Step 4: Plot forecasts
+plt.figure(figsize=(10, 6))
+plt.plot(train, label='Training Data')
+plt.plot(validation, label='Validation Data')
+plt.plot(validation.index, additive_forecast, label='Additive Forecast', color='red')
+plt.plot(validation.index, multiplicative_forecast, label='Multiplicative Forecast', color='green')
+plt.title('Holt-Winters Method (Additive & Multiplicative Models)')
+plt.legend()
+plt.show()
+
+# Step 5: Assessing Model Performance
+additive_rmse = np.sqrt(mean_squared_error(validation['value'], additive_forecast))
+multiplicative_rmse = np.sqrt(mean_squared_error(validation['value'], multiplicative_forecast))
+
+print(f"Additive Model RMSE: {additive_rmse}")
+print(f"Multiplicative Model RMSE: {multiplicative_rmse}")
+
+# Step 6: Checking Residuals
+additive_residuals = validation['value'] - additive_forecast
+multiplicative_residuals = validation['value'] - multiplicative_forecast
+
+plt.figure(figsize=(10, 6))
+plt.plot(additive_residuals, label='Additive Model Residuals', color='red')
+plt.plot(multiplicative_residuals, label='Multiplicative Model Residuals', color='green')
+plt.title('Residuals of Additive and Multiplicative Models')
+plt.legend()
+plt.show()
