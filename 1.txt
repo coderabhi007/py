@@ -1,0 +1,57 @@
+# Load necessary libraries
+library(ggplot2)
+library(corrplot)
+library(hexbin)
+library(vcd)
+
+# 1. Bar Chart
+data_bar <- data.frame(Category = c("A", "B", "C", "D"), Values = c(23, 45, 56, 78))
+ggplot(data_bar, aes(x = Category, y = Values, fill = Category)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Bar Chart", x = "Category", y = "Values")
+
+# 2. Histogram
+data_hist <- rnorm(1000)
+ggplot(data.frame(data_hist), aes(x = data_hist)) +
+  geom_histogram(binwidth = 0.5, fill = "blue", color = "black") +
+  theme_minimal() +
+  labs(title = "Histogram", x = "Values", y = "Frequency")
+
+# 3. Box Plot
+data_box <- data.frame(Category = rep(c("A", "B", "C"), each = 50),
+                       Values = c(rnorm(50, mean = 5), rnorm(50, mean = 10), rnorm(50, mean = 15)))
+ggplot(data_box, aes(x = Category, y = Values, fill = Category)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Box Plot", x = "Category", y = "Values")
+
+# 4. Scatter Plot
+data_scatter <- data.frame(x = rnorm(100), y = rnorm(100))
+ggplot(data_scatter, aes(x = x, y = y)) +
+  geom_point(color = "blue", size = 2) +
+  theme_minimal() +
+  labs(title = "Scatter Plot", x = "X-axis", y = "Y-axis")
+
+# 5. Correlogram
+data_corr <- mtcars
+cor_matrix <- cor(data_corr)
+corrplot(cor_matrix, method = "circle")
+
+# 6. Heat Map
+data_heatmap <- matrix(rnorm(100), nrow = 10)
+heatmap(data_heatmap, main = "Heat Map", col = colorRampPalette(c("blue", "white", "red"))(50))
+
+# 7. Hexagon Binning
+data_hex <- data.frame(x = rnorm(1000), y = rnorm(1000))
+ggplot(data_hex, aes(x = x, y = y)) +
+  geom_hex(bins = 30) +
+  theme_minimal() +
+  labs(title = "Hexagon Binning", x = "X-axis", y = "Y-axis")
+
+# 8. Mosaic Plot
+data_mosaic <- table(Titanic)
+mosaic(data_mosaic, main = "Mosaic Plot")
+# if nesessary download this
+install.packages(c("ggplot2", "corrplot", "hexbin", "vcd"))
+
