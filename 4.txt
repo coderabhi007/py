@@ -1,0 +1,77 @@
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from hurst import compute_Hc
+
+# Generate synthetic time-series data
+np.random.seed(42)
+n = 200
+time = np.arange(n)
+values = np.sin(0.1 * time) + np.random.normal(0, 0.5, n)  # Adding noise
+data = pd.Series(values, name="Value")
+
+# Plot the time series
+plt.figure(figsize=(10, 4))
+plt.plot(data, label="Time Series Data")
+plt.title("Time Series Data")
+plt.xlabel("Time")
+plt.ylabel("Value")
+plt.legend()
+plt.show()
+
+# Split data into train and test (80:20 split)
+split = len(data) - int(0.2 * len(data))
+train, test = data[:split], data[split:]
+
+# Function to perform Augmented Dickey-Fuller (ADF) test
+def adf_test(series):
+    result = adfuller(series)
+    print("ADF Test Results:")
+    print(f"ADF Statistic: {result[0]:.4f}")
+    print(f"p-value: {result[1]:.4f}")
+    print("Critical Values:")
+    for key, value in result[4].items():
+        print(f"\t{key}: {value:.3f}")
+    if result[1] <= 0.05:
+        print("\nThe series is stationary (p-value <= 0.05).")
+    else:
+        print("\nThe series is non-stationary (p-value > 0.05).")
+
+# Perform ADF test on the training data
+adf_test(train)
+
+# Function to compute Hurst exponent
+def hurst_exponent(series):
+    H, c, data = compute_Hc(series)
+    print(f"\nHurst Exponent Results:")
+    print(f"H = {H:.4f}, c = {c:.4f}")
+    if H < 0.5:
+        print("The series exhibits anti-persistent behavior (stationary).")
+    elif H > 0.5:
+        print("The series exhibits persistent behavior (non-stationary).")
+    else:
+        print("The series exhibits a random walk (Brownian motion).")
+
+# Compute Hurst exponent for the training data
+hurst_exponent(train)
+
+# If non-stationary, differencing the series
+if adfuller(train)[1] > 0.05:
+    diff_series = train.diff().dropna()
+    print("\nDifferencing applied to make the series stationary.")
+    plt.figure(figsize=(10, 4))
+    plt.plot(diff_series, label="Differenced Series")
+    plt.title("Differenced Time Series")
+    plt.xlabel("Time")
+    plt.ylabel("Value")
+    plt.legend()
+    plt.show()
+
+    # Re-run ADF test on differenced series
+    print("\nADF Test on Differenced Series:")
+    adf_test(diff_series)
+
+    # Re-compute Hurst exponent on differenced series
+    hurst_exponent(diff_series)
