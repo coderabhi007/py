@@ -1,0 +1,43 @@
+# Vectors
+# Create a vector
+apple <- c('red', 'green', 'yellow')
+print("Vector Example:")
+print(apple)
+print(class(apple)) # Get the class of the vector
+
+# Lists
+# Create a list
+list1 <- list(c(2, 5, 3), 21.3, sin)
+print("List Example:")
+print(list1)
+
+# Matrices
+# Create a matrix
+M <- matrix(c('a', 'a', 'b', 'c', 'b', 'a'), nrow = 2, ncol = 3, byrow = TRUE)
+print("Matrix Example:")
+print(M)
+
+# Arrays
+# Create an array
+a <- array(c('green', 'yellow'), dim = c(3, 3, 2))
+print("Array Example:")
+print(a)
+
+# Factors
+# Create a factor object
+apple_colors <- c('green', 'green', 'yellow', 'red', 'red', 'red', 'green')
+factor_apple <- factor(apple_colors)
+print("Factor Example:")
+print(factor_apple)
+print(paste("Number of Levels:", nlevels(factor_apple)))
+
+# Data Frames
+# Create the data frame
+BMI <- data.frame(
+   gender = c("Male", "Male", "Female"),
+   height = c(152, 171.5, 165),
+   weight = c(81, 93, 78),
+   Age = c(42, 38, 26)
+)
+print("Data Frame Example:")
+print(BMI)
