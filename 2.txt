@@ -1,0 +1,79 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from scipy.stats import boxcox
+
+# Generate a sample time series dataset
+np.random.seed(42)
+time_series = pd.Series(np.sin(np.linspace(0, 20, 100)) + np.random.normal(0, 0.5, 100), name="Value")
+
+# Convert to DataFrame for processing
+data = pd.DataFrame({'Time': range(len(time_series)), 'Value': time_series})
+
+# Display the original dataset
+print("Original Time Series Data:")
+print(data.head())
+
+# Step 1: Power Transform (Box-Cox Transform)
+# Box-Cox requires positive values, so shift the series to be positive if needed
+data['Value_Shifted'] = data['Value'] + abs(data['Value'].min()) + 1
+data['Value_PowerTransformed'], lambda_ = boxcox(data['Value_Shifted'])
+print(f"\nBox-Cox Lambda: {lambda_}")
+
+# Step 2: Seasonal Differencing (e.g., lag-12 for monthly data)
+seasonal_lag = 12
+data['Value_SeasonalDifferenced'] = data['Value_PowerTransformed'].diff(periods=seasonal_lag)
+
+# Step 3: Trend Differencing (first-order differencing)
+data['Value_TrendDifferenced'] = data['Value_SeasonalDifferenced'].diff()
+
+# Step 4: Standardization
+scaler = StandardScaler()
+data['Value_Standardized'] = scaler.fit_transform(data[['Value_TrendDifferenced']].dropna())
+
+# Step 5: Normalization
+normalizer = MinMaxScaler()
+data['Value_Normalized'] = normalizer.fit_transform(data[['Value_Standardized']].dropna())
+
+# Display the processed dataset
+print("\nProcessed Time Series Data:")
+print(data.tail())
+
+# Plot the transformations
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 8))
+
+# Original Data
+plt.subplot(5, 1, 1)
+plt.plot(data['Time'], data['Value'], label='Original Data')
+plt.title('Original Data')
+plt.legend()
+
+# Power Transformed Data
+plt.subplot(5, 1, 2)
+plt.plot(data['Time'], data['Value_PowerTransformed'], label='Power Transformed Data', color='orange')
+plt.title('Power Transform')
+plt.legend()
+
+# Seasonal Differenced Data
+plt.subplot(5, 1, 3)
+plt.plot(data['Time'], data['Value_SeasonalDifferenced'], label='Seasonal Differencing', color='green')
+plt.title('Seasonal Differencing')
+plt.legend()
+
+# Trend Differenced Data
+plt.subplot(5, 1, 4)
+plt.plot(data['Time'], data['Value_TrendDifferenced'], label='Trend Differencing', color='red')
+plt.title('Trend Differencing')
+plt.legend()
+
+# Normalized Data
+plt.subplot(5, 1, 5)
+plt.plot(data['Time'], data['Value_Normalized'], label='Normalized Data', color='purple')
+plt.title('Normalized Data')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
